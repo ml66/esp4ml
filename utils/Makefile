@@ -848,7 +848,7 @@ check_all_rtl_srcs-distclean:
 
 modelsim/xilinx_lib: $(XILINX_VIVADO)
 	$(QUIET_MKDIR)mkdir -p $@
-	@echo "compile_simlib -directory xilinx_lib -simulator modelsim -library unisim  -no_ip_compile" > $@/simlib.tcl; \
+	@echo "compile_simlib -directory xilinx_lib -simulator modelsim -library unisim" > $@/simlib.tcl; \
 	cd modelsim; \
 	vivado $(VIVADO_BATCH_OPT) -source xilinx_lib/simlib.tcl; \
 	lib_path=$$(cat modelsim.ini | grep secureip | cut -d " " -f 3); \
@@ -864,13 +864,13 @@ modelsim/xilinx_lib: $(XILINX_VIVADO)
 
 xcelium/xilinx_lib: $(XILINX_VIVADO)
 	$(QUIET_MKDIR)mkdir -p $@
-	@echo "compile_simlib -directory xilinx_lib -simulator xcelium -library unisim -no_ip_compile" > $@/simlib.tcl; \
+	@echo "compile_simlib -directory xilinx_lib -simulator xcelium -library unisim" > $@/simlib.tcl; \
 	cd xcelium; \
 	vivado $(VIVADO_BATCH_OPT) -source xilinx_lib/simlib.tcl; \
 
 incisive/xilinx_lib: $(XILINX_VIVADO)
 	$(QUIET_MKDIR)mkdir -p $@
-	@echo "compile_simlib -directory xilinx_lib -simulator ies -library unisim -no_ip_compile" > $@/simlib.tcl; \
+	@echo "compile_simlib -directory xilinx_lib -simulator ies -library unisim" > $@/simlib.tcl; \
 	cd incisive; \
 	vivado $(VIVADO_BATCH_OPT) -source xilinx_lib/simlib.tcl; \
 
