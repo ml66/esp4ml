@@ -39,6 +39,7 @@ load_data:
 
     load_ctrl[chunk].index = base;
     load_ctrl[chunk].length = CHUNK_SIZE;
+    load_ctrl[chunk].size = SIZE_WORD;
 
     for (unsigned i = 0; i < CHUNK_SIZE; i++)
 	_inbuff[i] = in1[base + i];
@@ -55,6 +56,7 @@ store_data:
 
     store_ctrl[chunk].index = base + base_index;
     store_ctrl[chunk].length = CHUNK_SIZE;
+    store_ctrl[chunk].size = SIZE_WORD;
 
     for (unsigned i = 0; i < CHUNK_SIZE; i++)
     	out[base + i] = _outbuff[i];
