@@ -1,0 +1,4 @@
+NOTICE!
+
+Make sure that the names of the entities of the generated RTL files do not match
+the name of the other Vivado HLS accelerators. Make them unique!
