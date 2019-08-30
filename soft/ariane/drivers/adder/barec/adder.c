@@ -156,7 +156,7 @@ int main(int argc, char * argv[])
 	    printf("\n");
 
 	    // Populate memory for gold output
-	    int val = 2;
+	    int val = 2 + 2 * (k * SIZE * 2);
 	    i = 0;
 	    while (i < SIZE) {
 		mem_gold[i++] = val;
