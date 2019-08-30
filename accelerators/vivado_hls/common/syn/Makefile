@@ -4,8 +4,7 @@
 include ../../common/common.mk
 
 HLS_TCL=script.tcl
-PROJECT_NAME="$(TARGET_NAME)_prj"
-RTL_FOLDER="$(TARGET_NAME)_basic_dma32"
+DMA_WIDTH="32 64"
 
 all: hls
 
@@ -14,22 +13,25 @@ hls:
 
 install:
 	@mkdir -p $(RTL_OUT)
-	@mkdir -p $(RTL_OUT)/$(RTL_FOLDER)
 ifneq ("$(TARGET_NAME)","")
 	@cp ../$(TARGET_NAME).xml $(RTL_OUT)
 endif
-	@echo "HERE"
-	@cp $(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/hdl/verilog/* $(RTL_OUT)/$(RTL_FOLDER)
-	@if [ -e $(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/hdl/ip/* ]; then \
-		cp $(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/hdl/ip/* $(RTL_OUT)/$(RTL_FOLDER); \
-	fi;
-	@if [ -e $(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip ]; then \
-		for dir in $$(ls $(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip); do \
-			indir=$(TARGET_NAME)/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip/$$dir; \
-			infile=$$indir/*.xci; \
-			cp $$infile $(RTL_OUT)/$(RTL_FOLDER); \
-		done; \
-	fi
+	@for dma in 32 64; do \
+		PRJ_NAME="$(TARGET_NAME)_dma$$dma"; \
+		mkdir -p $(RTL_OUT)/$$PRJ_NAME; \
+		cp $$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/hdl/verilog/* $(RTL_OUT)/$$PRJ_NAME; \
+		if [ -e $$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/hdl/ip/* ]; then \
+			cp $$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/hdl/ip/* $(RTL_OUT)/$$PRJ_NAME; \
+		fi; \
+		if [ -e $$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip ]; then \
+			for dir in $$(ls $$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip); do \
+				indir=$$PRJ_NAME/$(TARGET_NAME)_acc/impl/ip/tmp.srcs/sources_1/ip/$$dir; \
+				infile=$$indir/*.xci; \
+				cp $$infile $(RTL_OUT)/$$PRJ_NAME; \
+			done; \
+		fi; \
+	done
+
 
 # Clean out undesirable junk files from the project directory
 # Uses the automatically created clean_all target from Makefile.prj

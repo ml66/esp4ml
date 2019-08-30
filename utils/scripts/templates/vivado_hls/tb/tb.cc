@@ -24,11 +24,15 @@ int main(int argc, char **argv) {
     }
 
     // Prepare input data
-    for(unsigned i = 0; i < SIZE * 2; i++)
+    for(unsigned i = 0; i < SIZE; i++)
     	in[i] = (word) 1.1;
 
     // Call the TOP function
-    <accelerator_name>_basic_dma32(in, out, SIZE, load, store);
+#ifdef DMA32
+    <accelerator_name>_dma32(out, in, SIZE, load, store);
+#else
+    <accelerator_name>_dma64(out, in, SIZE, load, store);
+#endif
 
     // Display output
     for(unsigned i = 0; i < SIZE; i++)
