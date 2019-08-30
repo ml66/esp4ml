@@ -40,7 +40,7 @@ int main(int argc, char * argv[])
 
 	ndev = probe(&espdevs, SLD_ADDER, DEV_NAME);
 	if (!ndev) {
-		fprintf(stderr, "Error: %s device not found!\n", DEV_NAME);
+		/* fprintf(stderr, "Error: %s device not found!\n", DEV_NAME); */
 		exit(EXIT_FAILURE);
 	}
 
@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
 			unsigned errors = 0;
 			int scatter_gather = 1;
 
-			printf("******************** %s.%d ********************\n", DEV_NAME, n);
+			printf("******************** %s.%d ********************\n");
 
 			// Check access ok (TODO)
 
@@ -69,14 +69,14 @@ int main(int argc, char * argv[])
 
 			if (scatter_gather)
 				if (ioread32(dev, PT_NCHUNK_MAX_REG) < NCHUNK) {
-					fprintf(stderr, "  Trying to allocate %lu chunks on %d TLB available entries\n",
-						NCHUNK, ioread32(dev, PT_NCHUNK_MAX_REG));
+					/* fprintf(stderr, "  Trying to allocate %lu chunks on %d TLB available entries\n", */
+					/* 	NCHUNK, ioread32(dev, PT_NCHUNK_MAX_REG)); */
 					break;
 				}
 
 			// Allocate memory (will be contiguos anyway in baremetal)
 			mem = aligned_malloc(ADDER_BUF_SIZE);
-			printf("  memory buffer base-address = %p\n", mem);
+			/* printf("  memory buffer base-address = %p\n", mem); */
 
 			if (scatter_gather) {
 				//Alocate and populate page table
@@ -84,12 +84,12 @@ int main(int argc, char * argv[])
 				for (i = 0; i < NCHUNK; i++)
 					ptable[i] = (unsigned *)
 					    &mem[i * (CHUNK_SIZE / sizeof(unsigned))];
-				printf("  ptable = %p\n", ptable);
-				printf("  nchunk = %lu\n", NCHUNK);
+				/* printf("  ptable = %p\n", ptable); */
+				/* printf("  nchunk = %lu\n", NCHUNK); */
 			}
 
 			// Initialize input (TODO)
-			#include "data.c"
+			#include "data/data.c"
 
 			// Configure device
 			iowrite32(dev, SELECT_REG, ioread32(dev, DEVID_REG));
@@ -130,16 +130,16 @@ int main(int argc, char * argv[])
 			// Allocate memory for gold output
 			int *mem_gold;
 			mem_gold = aligned_malloc(ADDER_OUT_SIZE);
-			printf("  memory buffer base-address = %p\n", mem_gold);
+			/* printf("  memory buffer base-address = %p\n", mem_gold); */
 
 			// Populate memory for gold output
-			#include "data_gold.c"
+			#include "data/data_gold.c"
 
 			// printing the first few outputs
  			/* for (i = 0; i < SIZE * 4; i++) { */
  			for (i = SIZE * 2; i < SIZE * 2 + 64; i++) {
 			    /* printf(" %d = %d\n", i, mem[i]); */
-			    printf(" %d = %d = %d\n", i, mem[i], mem_gold[i - SIZE*2]);
+			    /* printf(" %d = %d = %d\n", i, mem[i], mem_gold[i - SIZE*2]); */
 			}
 
 			// Compare output and gold output
@@ -149,17 +149,14 @@ int main(int argc, char * argv[])
 
 			// Print validation result
 			if (errors)
-			    printf("  ... FAIL. Errors: %u.\n", errors);
+			    printf("  ... FAIL. Errors.\n");
 			else
 				printf("  ... PASS\n");
 
 			if (scatter_gather) {
-			    printf("Before free ptable: %p\n", ptable);
 			    aligned_free(ptable);
 			}
 
-			printf("Before free mem: %p\n", mem);
-			
 			aligned_free(mem);
 
 			printf("**************************************************\n\n");

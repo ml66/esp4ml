@@ -10,14 +10,6 @@
 #include <test/time.h>
 #include <adder.h>
 
-#include <assert.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <math.h>
-
 #define DEVNAME "/dev/adder.0"
 #define NAME "adder"
 

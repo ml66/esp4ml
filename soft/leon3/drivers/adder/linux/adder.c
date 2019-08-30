@@ -26,6 +26,9 @@ static struct of_device_id adder_device_ids[] = {
 	{
 		.name = "eb_014",
 	},
+	{
+		.compatible = "sld,adder",
+	},
 	{ },
 };
 
