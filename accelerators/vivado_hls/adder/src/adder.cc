@@ -4,13 +4,9 @@
 #include "hls_math.h"
 #include <cstring>
 
-#ifdef DMA32
-void adder_load_dma32(
-#else
-void adder_load_dma64(
-#endif
-    word _inbuff[CHUNK_SIZE * 2], word *in1, unsigned chunk,
-    dma_info_t *load_ctrl, int base_index)
+void LOAD(
+        word _inbuff[CHUNK_SIZE * 2], word *in1, unsigned chunk,
+        dma_info_t *load_ctrl, int base_index)
 {
 
 load_data:
@@ -23,16 +19,12 @@ load_data:
     load_ctrl[chunk].size = SIZE_WORD;
 
     for (unsigned i = 0; i < CHUNK_SIZE * 2; i++)
-	_inbuff[i] = in1[base + i];
+        _inbuff[i] = in1[base + i];
 }
 
-#ifdef DMA32
-void adder_store_dma32(
-#else
-void adder_store_dma64(
-#endif
-    word _outbuff[CHUNK_SIZE], word *out, unsigned chunk,
-    dma_info_t *store_ctrl, int base_index)
+void STORE(
+        word _outbuff[CHUNK_SIZE], word *out, unsigned chunk,
+        dma_info_t *store_ctrl, int base_index)
 {
 
 store_data:
@@ -44,29 +36,21 @@ store_data:
     store_ctrl[chunk].size = SIZE_WORD;
 
     for (unsigned i = 0; i < CHUNK_SIZE; i++)
-    	out[base + i] = _outbuff[i];
+        out[base + i] = _outbuff[i];
 }
 
-#ifdef DMA32
-void adder_compute_dma32(
-#else
-void adder_compute_dma64(
-#endif
-    word *_inbuff, word *_outbuff)
+void COMPUTE(
+        word *_inbuff, word *_outbuff)
 {
 
     for (int i = 0; i < CHUNK_SIZE; i++)
-    	_outbuff[i] = _inbuff[i*2] + _inbuff[i*2+1];
+        _outbuff[i] = _inbuff[i*2] + _inbuff[i*2+1];
 
 }
 
-#ifdef DMA32
-void adder_dma32(
-#else
-void adder_dma64(
-#endif
-    word *out, word *in1, const unsigned conf_info_size,
-    dma_info_t *load_ctrl, dma_info_t *store_ctrl)
+void TOP(
+        word *out, word *in1, const unsigned conf_info_size,
+        dma_info_t *load_ctrl, dma_info_t *store_ctrl)
 {
     word _inbuff[CHUNK_SIZE * 2];
     word _outbuff[CHUNK_SIZE];
@@ -77,14 +61,8 @@ void adder_dma64(
 go:
     for (unsigned i = 0; i < n_chunks; i++)
     {
-#ifdef DMA32
-	adder_load_dma32(_inbuff, in1, i, load_ctrl, 0);
-	adder_compute_dma32(_inbuff, _outbuff);
-	adder_store_dma32( _outbuff, out, i, store_ctrl, conf_info_size * 2);
-#else
-	adder_load_dma64(_inbuff, in1, i, load_ctrl, 0);
-	adder_compute_dma64(_inbuff, _outbuff);
-	adder_store_dma64( _outbuff, out, i, store_ctrl, conf_info_size * 2);
-#endif
+        LOAD(_inbuff, in1, i, load_ctrl, 0);
+        COMPUTE(_inbuff, _outbuff);
+        STORE( _outbuff, out, i, store_ctrl, conf_info_size * 2);
     }
 }

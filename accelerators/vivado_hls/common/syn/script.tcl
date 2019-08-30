@@ -20,9 +20,9 @@ foreach dma [list 32 64] {
 
     set_top "${ACCELERATOR}_dma${dma}"
 
-    add_files [glob ../src/*] -cflags "-DDMA${dma}"
-    add_files [glob ../inc/*] -cflags "-DDMA${dma}"
-    add_files -tb ../tb/tb.cc -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas -DDMA${dma}"
+    add_files [glob ../src/*] -cflags "-DDMA_SIZE=${dma}"
+    add_files [glob ../inc/*] -cflags "-DDMA_SIZE=${dma}"
+    add_files -tb ../tb/tb.cc -cflags "-Wno-unknown-pragmas -Wno-unknown-pragmas -DDMA_SIZE=${dma}"
 
     open_solution "${ACCELERATOR}_acc"
 

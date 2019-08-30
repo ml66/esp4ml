@@ -6,12 +6,20 @@
 #define CHUNK_SIZE 32
 
 // work with fixed point
-#ifdef DMA32
+#if (DMA_SIZE == 32)
 #define Nbit 32
 #define Nbit_integer 16
+#define TOP adder_dma32
+#define LOAD adder_load_dma32
+#define STORE adder_store_dma32
+#define COMPUTE adder_compute_dma32
 #else
 #define Nbit 64
 #define Nbit_integer 32
+#define TOP adder_dma64
+#define LOAD adder_load_dma64
+#define STORE adder_store_dma64
+#define COMPUTE adder_compute_dma64
 #endif
 typedef ap_fixed<Nbit,Nbit_integer> word;
 

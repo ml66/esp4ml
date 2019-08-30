@@ -29,11 +29,7 @@ int main(int argc, char **argv) {
     	in[i] = (word) 1.1;
 
     // Call the TOP function
-#ifdef DMA32
-    adder_dma32(out, in, SIZE, load, store);
-#else
-    adder_dma64(out, in, SIZE, load, store);
-#endif
+    TOP(out, in, SIZE, load, store);
 
     // Display output
     for(unsigned i = 0; i < SIZE; i++)
