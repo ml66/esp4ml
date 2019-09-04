@@ -4,9 +4,8 @@
 #include "hls_math.h"
 #include <cstring>
 
-void LOAD(
-        word _inbuff[CHUNK_SIZE * 2], word *in1, unsigned chunk,
-        dma_info_t *load_ctrl, int base_index)
+void LOAD (word _inbuff[CHUNK_SIZE * 2], word *in1, unsigned chunk,
+	  dma_info_t *load_ctrl, int base_index)
 {
 
 load_data:
@@ -22,9 +21,8 @@ load_data:
         _inbuff[i] = in1[base + i];
 }
 
-void STORE(
-        word _outbuff[CHUNK_SIZE], word *out, unsigned chunk,
-        dma_info_t *store_ctrl, int base_index)
+void STORE (word _outbuff[CHUNK_SIZE], word *out, unsigned chunk,
+	    dma_info_t *store_ctrl, int base_index)
 {
 
 store_data:
@@ -39,8 +37,7 @@ store_data:
         out[base + i] = _outbuff[i];
 }
 
-void COMPUTE(
-        word *_inbuff, word *_outbuff)
+void COMPUTE (word *_inbuff, word *_outbuff)
 {
 
     for (int i = 0; i < CHUNK_SIZE; i++)
@@ -48,9 +45,8 @@ void COMPUTE(
 
 }
 
-void TOP(
-        word *out, word *in1, const unsigned conf_info_size,
-        dma_info_t *load_ctrl, dma_info_t *store_ctrl)
+void TOP (word *out, word *in1, const unsigned conf_info_size,
+	 dma_info_t *load_ctrl, dma_info_t *store_ctrl)
 {
     word _inbuff[CHUNK_SIZE * 2];
     word _outbuff[CHUNK_SIZE];

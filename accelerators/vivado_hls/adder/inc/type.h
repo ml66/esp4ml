@@ -9,25 +9,23 @@
 #if (DMA_SIZE == 32)
 #define Nbit 32
 #define Nbit_integer 16
-#define TOP adder_dma32
-#define LOAD adder_load_dma32
-#define STORE adder_store_dma32
-#define COMPUTE adder_compute_dma32
 #else
 #define Nbit 64
 #define Nbit_integer 32
-#define TOP adder_dma64
-#define LOAD adder_load_dma64
-#define STORE adder_store_dma64
-#define COMPUTE adder_compute_dma64
 #endif
+
+#define TOP top
+#define LOAD load
+#define STORE store
+#define COMPUTE compute
+
 typedef ap_fixed<Nbit,Nbit_integer> word;
 
 // Ctrl
 typedef struct dma_info {
-    unsigned index;
-    unsigned length;
-    unsigned size;
+    ap_uint<32> index;
+    ap_uint<32> length;
+    ap_uint<32> size;
 } dma_info_t;
 
 // The 'size' variable of 'dma_info' indicates the bit-width of the words
