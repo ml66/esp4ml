@@ -32,6 +32,9 @@ void *accelerator_thread( void *ptr )
 	case spmv :
 		rc = ioctl(info->fd, SPMV_IOC_ACCESS, info->desc.spmv_desc);
 		break;
+	case svhnmlp :
+		rc = ioctl(info->fd, SVHNMLP_IOC_ACCESS, info->desc.svhnmlp_desc);
+		break;
 	case synth :
 		rc = ioctl(info->fd, SYNTH_IOC_ACCESS, info->desc.synth_desc);
 		break;
@@ -88,6 +91,9 @@ static void esp_config(esp_thread_info_t cfg[], unsigned nacc)
 			break;
 		case spmv:
 			esp_prepare(&info->desc.spmv_desc.esp);
+			break;
+		case svhnmlp:
+			esp_prepare(&info->desc.svhnmlp_desc.esp);
 			break;
 		case synth:
 			esp_prepare(&info->desc.synth_desc.esp);

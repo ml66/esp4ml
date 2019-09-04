@@ -35,6 +35,7 @@
 #include "dummy.h"
 #include "sort.h"
 #include "spmv.h"
+#include "svhnmlp.h"
 #include "synth.h"
 #include "visionchip.h"
 #include "vitbfly2.h"
@@ -45,6 +46,7 @@ enum esp_accelerator_type {
 	dummy,
 	sort,
 	spmv,
+	svhnmlp,
 	synth,
 	visionchip,
 	vitbfly2,
@@ -56,6 +58,7 @@ union esp_accelerator_descriptor {
 	struct dummy_access dummy_desc;
 	struct sort_access sort_desc;
 	struct spmv_access spmv_desc;
+	struct svhnmlp_access svhnmlp_desc;
 	struct synth_access synth_desc;
 	struct visionchip_access visionchip_desc;
 	struct vitbfly2_access vitbfly2_desc;
