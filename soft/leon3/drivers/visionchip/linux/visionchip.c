@@ -48,6 +48,8 @@ static void visionchip_prep_xfer(struct esp_device *esp, void *arg)
 	iowrite32be(a->nimages, esp->iomem + VISIONCHIP_NIMAGES_REG);
 	iowrite32be(a->rows, esp->iomem + VISIONCHIP_ROWS_REG);
 	iowrite32be(a->cols, esp->iomem + VISIONCHIP_COLS_REG);
+	iowrite32be(a->src_offset, esp->iomem + SRC_OFFSET_REG);
+	iowrite32be(a->dst_offset, esp->iomem + DST_OFFSET_REG);
 }
 
 static bool visionchip_xfer_input_ok(struct esp_device *esp, void *arg)

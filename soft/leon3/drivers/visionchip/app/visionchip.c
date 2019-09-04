@@ -736,6 +736,8 @@ static void visionchip_set_access(struct test_info *info)
 	t->desc.nimages = t->nimages;
 	t->desc.rows = t->rows;
 	t->desc.cols = t->cols;
+	t->desc.src_offset = 0;
+	t->desc.dst_offset = 0;
 }
 
 static void visionchip_comp(struct test_info *info)

@@ -27,6 +27,10 @@ struct visionchip_access {
 	unsigned int rows;
 	// Cols of input matrix. Cols of input vector.
 	unsigned int cols;
+	// Input offset (bytes) used for P2P setup
+	unsigned src_offset;
+	// Output offset (bytes) used for P2P setup
+	unsigned dst_offset;
 };
 
 #define VISIONCHIP_IOC_ACCESS	_IOW ('S', 0, struct visionchip_access)
