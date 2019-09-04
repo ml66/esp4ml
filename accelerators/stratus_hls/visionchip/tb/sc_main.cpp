@@ -8,17 +8,44 @@
 system_t * testbench = NULL;
 
 // Default settings if argv[] is not set
+<<<<<<< HEAD
 // std::string image_A_path = "lena-18x28.txt";
+=======
+
+// std::string image_in_path = "lena-18x28.txt";
+>>>>>>> fb8c13d... visionchip accel: add configuration for small input images 32x32 with 8bit pixels
 // std::string image_gold_path = "gold-18x28.txt";
 // uint32_t n_Images = 1;
 // uint32_t n_Rows = 18;
 // uint32_t n_Cols = 28;
+// bool do_validation = true;
+// bool do_dwt = true;
 
+<<<<<<< HEAD
 std::string image_A_path = "lena-30x40.txt";
 std::string image_gold_path = "gold-30x40.txt";
 uint32_t n_Images = 1;
 uint32_t n_Rows = 30;
 uint32_t n_Cols = 40;
+=======
+// std::string image_A_path = "lena-30x40.txt";
+// std::string image_out_path = "out-30x40.txt";
+// std::string image_gold_path = "gold-30x40.txt";
+// uint32_t n_Images = 1;
+// uint32_t n_Rows = 30;
+// uint32_t n_Cols = 40;
+// bool do_validation = true;
+// bool do_dwt = true;
+
+std::string image_A_path = "svhn_0_32x32.txt";
+std::string image_out_path = "svhn_0_out_32x32.txt";
+std::string image_gold_path = "svhn_0_gold_32x32.txt";
+uint32_t n_Images = 1;
+uint32_t n_Rows = 32;
+uint32_t n_Cols = 32;
+bool do_validation = true;
+bool do_dwt = false;
+>>>>>>> fb8c13d... visionchip accel: add configuration for small input images 32x32 with 8bit pixels
 
 extern void esc_elaborate()
 {
