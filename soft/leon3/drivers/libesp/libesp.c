@@ -70,24 +70,8 @@ static void esp_config(esp_thread_info_t cfg[], unsigned nacc)
 	for (i = 0; i < nacc; i++) {
 		esp_thread_info_t *info = &cfg[i];
 
-		char path[70];
-		const char *prefix = "/dev/";
-
 		if (!info->run)
 			continue;
-
-		if (strlen(info->devname) > 64) {
-			contig_free(*contig);
-			die("Error: device name %s exceeds maximum length of 64 characters\n", info->devname);
-		}
-
-		sprintf(path, "%s%s", prefix, info->devname);
-
-		info->fd = open(path, O_RDWR, 0);
-		if (info->fd < 0) {
-			contig_free(*contig);
-			die_errno("fopen failed\n");
-		}
 
 		switch (info->type) {
 		case adder:
@@ -143,6 +127,25 @@ void esp_run(esp_thread_info_t cfg[], unsigned nacc)
 
 	esp_config(cfg, nacc);
 
+	for (i = 0; i < nacc; i++) {
+		esp_thread_info_t *info = &cfg[i];
+		char path[70];
+		const char *prefix = "/dev/";
+
+		if (strlen(info->devname) > 64) {
+			contig_free(*contig);
+			die("Error: device name %s exceeds maximum length of 64 characters\n", info->devname);
+		}
+
+		sprintf(path, "%s%s", prefix, info->devname);
+
+		info->fd = open(path, O_RDWR, 0);
+		if (info->fd < 0) {
+			contig_free(*contig);
+			die_errno("fopen failed\n");
+		}
+	}
+
 	gettime(&th_start);
 	for (i = 0; i < nacc; i++) {
 		esp_thread_info_t *info = &cfg[i];
@@ -155,7 +158,6 @@ void esp_run(esp_thread_info_t cfg[], unsigned nacc)
 			perror("pthread_create");
 		}
 	}
-
 	for (i = 0; i < nacc; i++) {
 		esp_thread_info_t *info = &cfg[i];
 
@@ -166,10 +168,12 @@ void esp_run(esp_thread_info_t cfg[], unsigned nacc)
 		if(rc != 0) {
 			perror("pthread_join");
 		}
+		close(info->fd);
 	}
-	free(thread);
 	gettime(&th_end);
 	print_time_info(cfg, ts_subtract(&th_start, &th_end), nacc);
+
+	free(thread);
 }
 
 
@@ -180,14 +184,5 @@ void esp_dump(void *swbuf, size_t size)
 
 void esp_cleanup(esp_thread_info_t cfg[], unsigned nacc)
 {
-	int i;
 	contig_free(*contig);
-	for (i = 0; i < nacc; i++) {
-		esp_thread_info_t *info = &cfg[i];
-
-		if (!info->run)
-			continue;
-
-		close(info->fd);
-	}
 }
