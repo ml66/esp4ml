@@ -15,6 +15,14 @@ def main():
 
     size = 32
 
+    y_img = load_yuv_img_from_txt_YUV_ONLY('./svhn_0_32x32.txt', size, size)
+    plt.imshow(y_img, cmap=plt.cm.binary, vmin=0, vmax=256)
+    plt.show()
+
+    y_img = load_yuv_img_from_txt_YUV_ONLY('./svhn_0_gold_32x32.txt', size, size)
+    plt.imshow(y_img, cmap=plt.cm.binary, vmin=0, vmax=256)
+    plt.show()
+
     y_img = load_yuv_img_from_txt_YUV_ONLY('./svhn_0_out_32x32.txt', size, size)
     plt.imshow(y_img, cmap=plt.cm.binary, vmin=0, vmax=256)
     plt.show()

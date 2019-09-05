@@ -61,25 +61,30 @@ define_system_module tb ../tb/system.cpp ../tb/sc_main.cpp
 ######################################################################
 set DEFAULT_ARGV ""
 
-foreach dma [list 32 64] {
-    foreach plm_img_size [list 1024 307200] {
-	foreach plm_hist_size [list 256 65536] {
+foreach dma [list 64] {
+    foreach plm_img_size [list 1024] {
+	foreach max_pxl_width_log [list 3] {
 
-	    define_io_config * IOCFG_DMA$dma -DDMA_WIDTH=$dma \
-		-DPLM_IMG_SIZE=$plm_img_size \
-		-DPLM_HIST_SIZE=$plm_hist_size
+	    # # Skip these configurations
+	    # if {$plm_img_size == 1024 && $max_pxl_width_log == 4} {continue}
+	    # if {$plm_img_size == 307200 && $max_pxl_width_log == 3} {continue}
 
-	    define_system_config tb TESTBENCH_DMA$dma -io_config IOCFG_DMA$dma
+	    set ext DMA$dma\_IMG$plm_img_size\_PXL$max_pxl_width_log
 
-	    define_sim_config "BEHAV_DMA$dma" "visionchip BEH" "tb TESTBENCH_DMA$dma" -io_config IOCFG_DMA$dma -argv $DEFAULT_ARGV
+	    define_io_config * IOCFG_$ext -DDMA_WIDTH=$dma \
+		-DPLM_IMG_SIZE=$plm_img_size -DMAX_PXL_WIDTH_LOG=$max_pxl_width_log
 
-	    foreach cfg [list BASIC FAST] {
-		set cname $cfg\_DMA$dma
-		define_hls_config visionchip $cname -io_config IOCFG_DMA$dma --clock_period=$CLOCK_PERIOD $COMMON_HLS_FLAGS -DHLS_DIRECTIVES_$cfg
+	    define_system_config tb TESTBENCH_$ext -io_config IOCFG_$ext
+
+	    define_sim_config "BEHAV_$ext" "visionchip BEH" "tb TESTBENCH_$ext" -io_config IOCFG_$ext -argv $DEFAULT_ARGV
+
+	    foreach cfg [list FAST] {
+		set cname $cfg\_$ext
+		define_hls_config visionchip $cname -io_config IOCFG_$ext --clock_period=$CLOCK_PERIOD $COMMON_HLS_FLAGS -DHLS_DIRECTIVES_$cfg
 		if {$TECH_IS_XILINX == 1} {
-		    define_sim_config "$cname\_V" "visionchip RTL_V $cname" "tb TESTBENCH_DMA$dma" -io_config IOCFG_DMA$dma -argv $DEFAULT_ARGV -verilog_top_modules glbl
+		    define_sim_config "$cname\_V" "visionchip RTL_V $cname" "tb TESTBENCH_$ext" -io_config IOCFG_$ext -argv $DEFAULT_ARGV -verilog_top_modules glbl
 		} else {
-		    define_sim_config "$cname\_V" "visionchip RTL_V $cname" "tb TESTBENCH_DMA$dma" -io_config IOCFG_DMA$dma -argv $DEFAULT_ARGV
+		    define_sim_config "$cname\_V" "visionchip RTL_V $cname" "tb TESTBENCH_$ext" -io_config IOCFG_$ext -argv $DEFAULT_ARGV
 		}
 	    }
 	}

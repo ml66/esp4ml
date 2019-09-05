@@ -130,7 +130,8 @@ void system_t::load_memory()
     for (i = 0; i < n_Images; i++) {
         for (j = 0; j < n_Pixels; j += WORDS_PER_DMA) {
             for (uint8_t k = 0; k < WORDS_PER_DMA; k++)
-                mem[mem_i].range(((k + 1) << 4) - 1, k << 4) = sc_bv<16>(imgA[j + k]);
+                mem[mem_i].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1, k << MAX_PXL_WIDTH_LOG) =
+		    sc_bv<MAX_PXL_WIDTH>(imgA[j + k]);
             mem_i++;
         }
     }
@@ -144,7 +145,43 @@ void system_t::load_memory()
 
 void system_t::dump_memory()
 {
+<<<<<<< HEAD
     // ESP_REPORT_INFO("dump memory completed");
+=======
+    int n_Pixels = n_Rows * n_Cols;
+
+    // -- Read the gold image
+    FILE *fileOut = NULL;
+    if((fileOut = fopen(image_out_path.c_str(), "w")) == (FILE*)NULL)
+    {
+        ESP_REPORT_ERROR("[Err] could not open %s", image_out_path.c_str());
+        fclose(fileOut);
+    }
+
+    ESP_REPORT_INFO("image_out_path: %s", image_out_path.c_str());
+
+    // Store output file
+    int mem_j = 0;
+    for (int i = 0; i < n_Images; i++) {
+        for(uint32_t j = 0 ; j < n_Pixels ; j += WORDS_PER_DMA) {
+            for (uint8_t k = 0; k < WORDS_PER_DMA; k++) {
+		if (do_dwt)
+		    fprintf(fileOut, "%u\n",
+			    mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+					     k << MAX_PXL_WIDTH_LOG).to_int());
+		else
+		    fprintf(fileOut, "%u\n",
+			    mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+					     k << MAX_PXL_WIDTH_LOG).to_uint());
+	    }
+            mem_j++;
+        }
+    }
+
+    fclose(fileOut);
+
+    ESP_REPORT_INFO("dump memory completed");
+>>>>>>> ad5e8f7... visionchip accel: add support for images with 8bit pixels
 }
 
 int system_t::validate()
@@ -181,6 +218,7 @@ int system_t::validate()
     int mem_j = 0;
     for (int i = 0; i < n_Images; i++) {
         for(uint32_t j = 0 ; j < n_Pixels ; j += WORDS_PER_DMA) {
+<<<<<<< HEAD
             for (uint8_t k = 0; k < WORDS_PER_DMA; k++)
                 if (mem[mem_j].range(((k + 1) << 4) - 1, k << 4).to_int() != imgGold[j + k])
                 {
@@ -188,6 +226,29 @@ int system_t::validate()
                                     mem_j, mem[mem_j].range(((k + 1) << 4) - 1, k << 4).to_int(), imgGold[j + k]);
                     errors++;
                 }
+=======
+            for (uint8_t k = 0; k < WORDS_PER_DMA; k++) {
+		if (do_dwt) {
+		    if (mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+					 k << MAX_PXL_WIDTH_LOG).to_int() != imgGold[j + k])
+		    {
+			ESP_REPORT_INFO("Error: %d: %d %d.", mem_j,
+					mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+							 k << MAX_PXL_WIDTH_LOG).to_int(), imgGold[j + k]);
+			errors++;
+		    }
+		} else {
+		    if (mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+					 k << MAX_PXL_WIDTH_LOG).to_uint() != imgGold[j + k])
+		    {
+			ESP_REPORT_INFO("Error: %d: %d %d.", mem_j,
+					mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
+							 k << MAX_PXL_WIDTH_LOG).to_uint(), imgGold[j + k]);
+			errors++;
+		    }
+		}
+	    }
+>>>>>>> ad5e8f7... visionchip accel: add support for images with 8bit pixels
             mem_j++;
         }
     }
