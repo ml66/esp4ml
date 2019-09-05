@@ -13,7 +13,7 @@ set ESP_ROOT $::env(ESP_ROOT)
 set ACCELERATOR $::env(ACCELERATOR)
 set TECH_PATH "$ESP_ROOT/tech/$TECH"
 
-foreach dma [list 32] {
+foreach dma [list 32 64] {
 
     # Create project
     open_project "${ACCELERATOR}_dma${dma}"
@@ -65,7 +65,6 @@ foreach dma [list 32] {
 
     # Export RTL
     export_design -rtl verilog -format ip_catalog
-
 }
 
 exit

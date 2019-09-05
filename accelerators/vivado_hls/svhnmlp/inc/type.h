@@ -6,15 +6,20 @@
 #include "parameters.h"
 
 // Data types and constants
-#define DATA_BITWIDTH 16
+#define DATA_BITWIDTH 8
 #define VALUES_PER_WORD (DMA_SIZE / DATA_BITWIDTH)
 #define NINPUTS 3
 #define NCHUNK NINPUTS
 #define SIZE_IN_CHUNK_DATA  N_INPUT_1_1
 #define SIZE_OUT_CHUNK_DATA N_LAYER_10
 #define SIZE_IN_CHUNK  (N_INPUT_1_1 / VALUES_PER_WORD)
-#define SIZE_OUT_CHUNK (N_LAYER_10  / VALUES_PER_WORD)
-#define SIZE_IN (NINPUTS  * SIZE_IN_CHUNK)
+// TODO parameterize
+#if ((N_LAYER_10 % VALUES_PER_WORD) == 0)
+#define SIZE_OUT_CHUNK (N_LAYER_10 / VALUES_PER_WORD)
+#else
+#define SIZE_OUT_CHUNK (N_LAYER_10 / VALUES_PER_WORD + 1)
+#endif
+#define SIZE_IN (NINPUTS * SIZE_IN_CHUNK)
 #define SIZE_OUT (NINPUTS * SIZE_OUT_CHUNK)
 
 typedef ap_int<DMA_SIZE> word;

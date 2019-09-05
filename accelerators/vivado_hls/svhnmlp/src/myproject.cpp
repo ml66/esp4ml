@@ -106,6 +106,4 @@ void myproject(
     nnet::dense_large<layer9_t, layer10_t, config10>(layer9_out, layer10_out, w10, b10);
 
     nnet::softmax<layer10_t, result_t, softmax_config11>(layer10_out, layer11_out);
-
-
 }

@@ -14,6 +14,7 @@
 
 int main(int argc, char **argv)
 {
+    printf("SIZEOUTCHUNK %d\n", SIZE_OUT_CHUNK);
 
     printf("\n**** Start ****\n");
 
@@ -93,24 +94,28 @@ int main(int argc, char **argv)
 
 	fout << "Result" << std::endl;
 	unsigned errors = 0;
-	k = 0;
-	for(int i = 0; i < SIZE_OUT; i++) {
-	    for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-		if (k < SIZE_IN_CHUNK_DATA * NINPUTS) {
-		    bus_data_word out_int =
-			out[i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
+	for(int l = 0; l < NINPUTS; l++) {
+	    k = 0;
+	    for(int i = 0; i < SIZE_OUT_CHUNK; i++) {
+		for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
+		    if (k < SIZE_OUT_CHUNK_DATA) {
+			bus_data_word out_int =
+			    out[l * SIZE_OUT_CHUNK + i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
 
-		    fout << out_int << " ";
-		    fout << pr[k] << " ";
-		    results << out_int << " ";
+			fout << out_int << " ";
+			fout << pr[k] << " ";
+			results << out_int << " ";
 
-		    if ((pr[k] > 0.5 && out_int == 0) ||
-			(pr[k] < 0.5 && out_int == 1))
-			errors++;
-		    k++;
+			if ((pr[k + l * SIZE_OUT_CHUNK_DATA] > 0.5 && out_int == 0) ||
+			    (pr[k + l * SIZE_OUT_CHUNK_DATA] < 0.5 && out_int == 1))
+			    errors++;
+
+			k++;
+		    }
 		}
 	    }
 	}
+
 	fout << std::endl;
 	results << std::endl;
 

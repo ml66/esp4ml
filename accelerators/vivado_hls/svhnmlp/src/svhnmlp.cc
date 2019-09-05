@@ -19,13 +19,15 @@ load_data:
 
     load_ctrl[chunk].index = base;
     load_ctrl[chunk].length = SIZE_IN_CHUNK;
-    load_ctrl[chunk].size = SIZE_WORD;
+    load_ctrl[chunk].size = SIZE_BYTE;
 
     unsigned k = 0;
     for (unsigned i = 0; i < SIZE_IN_CHUNK; i++) {
 	for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    _inbuff[k++] = (in_data_word)
-		in1[base + i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
+	    unsigned uval = in1[base + i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
+	    int val = uval;
+	    _inbuff[k++] = (in_data_word) val;
+	    int bufval = _inbuff[k-1];
 	}
     }
 }
@@ -42,13 +44,14 @@ store_data:
 
     store_ctrl[chunk].index = base + base_index;
     store_ctrl[chunk].length = SIZE_OUT_CHUNK;
-    store_ctrl[chunk].size = SIZE_WORD;
+    store_ctrl[chunk].size = SIZE_BYTE;
 
     unsigned i = 0, k = 0;
     for (; i < SIZE_OUT_CHUNK; i++) {
 	word out_int = 0; 	
 	for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    if (k < SIZE_IN_CHUNK_DATA) {
+	    if (k < SIZE_OUT_CHUNK_DATA) {
+		int tmp = (int) _outbuff[k];
 		out_int.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j) =
 		    (bus_data_word) _outbuff[k++];
 	    }
