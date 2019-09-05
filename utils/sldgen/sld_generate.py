@@ -463,7 +463,15 @@ def write_acc_port_map(f, acc, dma_width, rst, is_noc_interface, is_vivadohls_if
   else:
 
     f.write("    port map(\n")
-    f.write("      conf_info_size             => conf_info_size,\n")
+    for param in acc.param:
+      if not param.readonly:
+        spacing = " "
+        if 16 - len(param.name) > 0:
+          spacing = (16-len(param.name))*" "
+        if is_noc_interface:
+          f.write("      conf_info_" + param.name + spacing + " => " + "bank(" + acc.name.upper() + "_" + param.name.upper() + "_REG)(" + str(param.size - 1) + " downto 0),\n")
+        else:
+          f.write("      conf_info_" + param.name + spacing + " => " + "conf_info_" + param.name +",\n")
     f.write("      ap_clk                     => clk,\n")
     f.write("      ap_rst                     => rst,\n")
     f.write("      ap_start                   => ap_start_reg,\n")
