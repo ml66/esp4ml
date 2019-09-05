@@ -6,7 +6,6 @@
 #include "hls_math.h"
 #include <cstring>
 
-
 void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], word *in1, unsigned chunk,
 	  dma_info_t *load_ctrl, int base_index)
 {
@@ -21,18 +20,17 @@ load_data:
     load_ctrl[chunk].length = SIZE_IN_CHUNK;
     load_ctrl[chunk].size = SIZE_BYTE;
 
-    unsigned k = 0;
     for (unsigned i = 0; i < SIZE_IN_CHUNK; i++) {
-	for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    unsigned uval = in1[base + i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
-	    int val = uval;
-	    _inbuff[k++] = (in_data_word) val;
-	    int bufval = _inbuff[k-1];
-	}
+    	word in1_dma = in1[base + i];
+    	load_label0:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
+    		unsigned uval = in1_dma.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
+    		int val = uval;
+    		_inbuff[i * VALUES_PER_WORD + j] = (in_data_word) val;
+    	}
     }
 }
 
-void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA], word *out, unsigned chunk,
+void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], word *out, unsigned chunk,
 	    dma_info_t *store_ctrl, int base_index)
 {
 
@@ -49,12 +47,10 @@ store_data:
     unsigned i = 0, k = 0;
     for (; i < SIZE_OUT_CHUNK; i++) {
 	word out_int = 0; 	
-	for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    if (k < SIZE_OUT_CHUNK_DATA) {
-		int tmp = (int) _outbuff[k];
-		out_int.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j) =
-		    (bus_data_word) _outbuff[k++];
-	    }
+	store_label1:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
+	    int tmp = (int) _outbuff[k];
+	    out_int.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j) =
+		(bus_data_word) _outbuff[k++];
 	}
 	out[base + i] = out_int;
     }
@@ -69,17 +65,17 @@ void COMPUTE (in_data_word *_inbuff, out_data_word *_outbuff)
     myproject(_inbuff, _outbuff, size_in1, size_out1);
 }
 
-void TOP (word *out, word *in1, const unsigned n_chunks,
+void TOP (word *out, word *in1, const unsigned conf_info_ninputs,
 	  dma_info_t *load_ctrl, dma_info_t *store_ctrl)
 
 {
     in_data_word _inbuff[SIZE_IN_CHUNK_DATA];
-    out_data_word _outbuff[SIZE_OUT_CHUNK_DATA];
+    out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8];
 
     printf("Main loop starting...\n");
 
 go:
-    for (unsigned i = 0; i < n_chunks; i++)
+    for (unsigned i = 0; i < conf_info_ninputs; i++)
     {
 	LOAD(_inbuff, in1, i, load_ctrl, 0);
 	COMPUTE(_inbuff, _outbuff);

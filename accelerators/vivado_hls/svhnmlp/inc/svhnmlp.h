@@ -4,6 +4,6 @@
 #include "type.h"
 #include <cstdio>
 
-void TOP (word *out, word* in1, const unsigned n_chunks,
+void TOP (word *out, word* in1, const unsigned conf_info_ninputs,
 	  dma_info_t *load_ctrl, dma_info_t *store_ctrl);
 #endif

@@ -105,9 +105,10 @@ int main(int argc, char **argv)
 			fout << out_int << " ";
 			fout << pr[k] << " ";
 			results << out_int << " ";
+			std::cout << out_int << " ";
 
-			if ((pr[k + l * SIZE_OUT_CHUNK_DATA] > 0.5 && out_int == 0) ||
-			    (pr[k + l * SIZE_OUT_CHUNK_DATA] < 0.5 && out_int == 1))
+			if ((pr[k + l * SIZE_OUT_CHUNK_DATA] > 0.5 && out_int != 1) ||
+			    (pr[k + l * SIZE_OUT_CHUNK_DATA] < 0.5 && out_int != 0))
 			    errors++;
 
 			k++;
@@ -118,6 +119,7 @@ int main(int argc, char **argv)
 
 	fout << std::endl;
 	results << std::endl;
+	std::cout << std::endl;
 
 	if (errors)
 	    std::cout << "Validation FAILED! " << errors << " errors" << std::endl;
