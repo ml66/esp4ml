@@ -16,14 +16,19 @@
 
 // Statically define the size of the input image for this test
 // Prepare in this path the corresponding data_ROWSxCOLS.h
-/* #define COLS 30 */
-/* #define ROWS 40 */
-#define COLS 32
-#define ROWS 32
+#define IS_SMALL
 
+#ifndef IS_SMALL
+#define COLS 30
+#define ROWS 40
 // Define data type of the pixel
 typedef short pixel;
-/* typedef char pixel; */
+#else
+#define COLS 32
+#define ROWS 32
+// Define data type of the pixel
+typedef char pixel;
+#endif
 
 #define VISIONCHIP_BUF_SIZE (ROWS * COLS * 2 * sizeof(pixel))
 
@@ -38,6 +43,7 @@ typedef short pixel;
 #define VISIONCHIP_NIMAGES_REG   0x40
 #define VISIONCHIP_NROWS_REG     0x44
 #define VISIONCHIP_NCOLS_REG     0x48
+#define VISIONCHIP_DO_DWT_REG    0x4C
 
 
 int main(int argc, char * argv[])
@@ -151,6 +157,11 @@ int main(int argc, char * argv[])
 			iowrite32(dev, VISIONCHIP_NIMAGES_REG, 1);
 			iowrite32(dev, VISIONCHIP_NROWS_REG, ROWS);
 			iowrite32(dev, VISIONCHIP_NCOLS_REG, COLS);
+#if (ROWS == 32 && COLS == 32)
+			iowrite32(dev, VISIONCHIP_DO_DWT_REG, 0);
+#else
+			iowrite32(dev, VISIONCHIP_DO_DWT_REG, 1);
+#endif
 
 			// Flush for non-coherent DMA
 			esp_flush(coherence);
