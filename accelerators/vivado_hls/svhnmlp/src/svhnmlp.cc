@@ -1,3 +1,4 @@
+#include <iostream>
 #include "svhnmlp.h"
 #include "type.h"
 #include "parameters.h"
@@ -6,7 +7,7 @@
 #include "hls_math.h"
 #include <cstring>
 
-void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], word *in1, unsigned chunk,
+void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], dma_word_t *in1, unsigned base,
 	  dma_info_t *load_ctrl, int base_index)
 {
 
@@ -14,23 +15,18 @@ void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], word *in1, unsigned chunk,
 
 load_data:
 
-    unsigned base = SIZE_IN_CHUNK * chunk;
-
-    load_ctrl[chunk].index = base;
-    load_ctrl[chunk].length = SIZE_IN_CHUNK;
-    load_ctrl[chunk].size = SIZE_BYTE;
+    load_ctrl->index = base;
+    load_ctrl->length = SIZE_IN_CHUNK;
+    load_ctrl->size = SIZE_BYTE;
 
     for (unsigned i = 0; i < SIZE_IN_CHUNK; i++) {
-    	word in1_dma = in1[base + i];
     	load_label0:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-    		unsigned uval = in1_dma.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
-    		int val = uval;
-    		_inbuff[i * VALUES_PER_WORD + j] = (in_data_word) val;
+	    _inbuff[i * VALUES_PER_WORD + j] = in1[i].word[j];;
     	}
     }
 }
 
-void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], word *out, unsigned chunk,
+void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], dma_word_t *out, unsigned base,
 	    dma_info_t *store_ctrl, int base_index)
 {
 
@@ -38,25 +34,19 @@ void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], word *out, unsigned
 
 store_data:
 
-    unsigned base = SIZE_OUT_CHUNK * chunk;
+    store_ctrl->index = base + base_index;
+    store_ctrl->length = SIZE_OUT_CHUNK;
+    store_ctrl->size = SIZE_BYTE;
 
-    store_ctrl[chunk].index = base + base_index;
-    store_ctrl[chunk].length = SIZE_OUT_CHUNK;
-    store_ctrl[chunk].size = SIZE_BYTE;
-
-    unsigned i = 0, k = 0;
-    for (; i < SIZE_OUT_CHUNK; i++) {
-	word out_int = 0; 	
+    for (unsigned i = 0; i < SIZE_OUT_CHUNK; i++) {
 	store_label1:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    int tmp = (int) _outbuff[k];
-	    out_int.range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j) =
-		(bus_data_word) _outbuff[k++];
+	    out[i].word[j] = _outbuff[i * VALUES_PER_WORD + j];
 	}
-	out[base + i] = out_int;
     }
 }
 
-void COMPUTE (in_data_word *_inbuff, out_data_word *_outbuff)
+void COMPUTE (in_data_word _inbuff[SIZE_IN_CHUNK_DATA],
+	      out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8])
 {
     printf("Compute\n");
 
@@ -65,20 +55,24 @@ void COMPUTE (in_data_word *_inbuff, out_data_word *_outbuff)
     myproject(_inbuff, _outbuff, size_in1, size_out1);
 }
 
-void TOP (word *out, word *in1, const unsigned conf_info_ninputs,
+void TOP (dma_word_t *out, dma_word_t *in1, const unsigned conf_info_ninputs,
 	  dma_info_t *load_ctrl, dma_info_t *store_ctrl)
 
 {
-    in_data_word _inbuff[SIZE_IN_CHUNK_DATA];
-    out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8];
-
     printf("Main loop starting...\n");
 
 go:
     for (unsigned i = 0; i < conf_info_ninputs; i++)
     {
-	LOAD(_inbuff, in1, i, load_ctrl, 0);
+	int size_in = conf_info_ninputs * SIZE_IN_CHUNK;
+	in_data_word _inbuff[SIZE_IN_CHUNK_DATA];
+	out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8];
+
+	unsigned in_base = SIZE_IN_CHUNK * i;
+	unsigned out_base = SIZE_OUT_CHUNK * i;
+
+	LOAD(_inbuff, in1, in_base, load_ctrl, 0);
 	COMPUTE(_inbuff, _outbuff);
-	STORE( _outbuff, out, i, store_ctrl, SIZE_IN);
+	STORE( _outbuff, out, out_base, store_ctrl, size_in);
     }
 }

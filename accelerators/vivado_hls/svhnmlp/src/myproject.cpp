@@ -43,7 +43,7 @@ void myproject(
     #pragma HLS ARRAY_RESHAPE variable=input1 complete dim=0 
     #pragma HLS ARRAY_RESHAPE variable=layer11_out complete dim=0 
     // #pragma HLS INTERFACE ap_vld port=input1,layer11_out 
-    #pragma HLS DATAFLOW 
+    // #pragma HLS DATAFLOW 
 
     const_size_in_1 = N_INPUT_1_1;
     const_size_out_1 = N_LAYER_10;

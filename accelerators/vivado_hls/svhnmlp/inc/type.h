@@ -22,8 +22,12 @@
 #define SIZE_IN (NINPUTS * SIZE_IN_CHUNK)
 #define SIZE_OUT (NINPUTS * SIZE_OUT_CHUNK)
 
-typedef ap_int<DMA_SIZE> word;
-typedef ap_int<DATA_BITWIDTH> bus_data_word;
+// data work
+typedef ap_int<DATA_BITWIDTH> word_t;
+typedef struct dma_word {
+    word_t word[VALUES_PER_WORD];
+} dma_word_t;
+
 typedef input_t in_data_word;
 typedef result_t out_data_word;
 

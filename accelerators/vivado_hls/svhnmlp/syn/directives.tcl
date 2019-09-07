@@ -20,5 +20,5 @@ set_directive_loop_tripcount -min 256 -max 256 -avg 256 "top/go"
 set_directive_dataflow "top/go"
 set_directive_unroll -factor 8 "store/store_label1"
 set_directive_unroll -factor 8 "load/load_label0"
-set_directive_array_partition -type cyclic -factor 8 -dim 1 "top" _inbuff
-set_directive_array_partition -type cyclic -factor 8 -dim 1 "top" _outbuff
+# set_directive_array_partition -type cyclic -factor 8 -dim 1 "top" _inbuff
+# set_directive_array_partition -type cyclic -factor 8 -dim 1 "top" _outbuff

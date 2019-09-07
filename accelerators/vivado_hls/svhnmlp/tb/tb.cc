@@ -18,10 +18,10 @@ int main(int argc, char **argv)
 
     printf("\n**** Start ****\n");
 
-    word *in  = (word*) malloc(SIZE_IN * sizeof(word));
-    word *out = (word*) malloc(SIZE_OUT * sizeof(word));
-    dma_info_t *load  = (dma_info_t*) malloc(NCHUNK * sizeof(dma_info_t));
-    dma_info_t *store = (dma_info_t*) malloc(NCHUNK * sizeof(dma_info_t));
+    dma_word_t in[SIZE_IN];
+    dma_word_t out[SIZE_OUT];
+    dma_info_t load[NCHUNK];
+    dma_info_t store[NCHUNK];
 
     if (in == NULL || out == NULL || load == NULL || store == NULL)
     {
@@ -80,13 +80,15 @@ int main(int argc, char **argv)
 	unsigned k = 0;
 	for(unsigned i = 0; i < SIZE_IN; i++) {
 	    for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-		in[i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j) =
-		    (bus_data_word) in_vector[k++];
+		in[i].word[j] = (word_t) in_vector[k++];
 	    }
 	}
 
-	for(unsigned i = 0; i < SIZE_OUT; i++)
-	    out[i] = 0;
+	for(unsigned i = 0; i < SIZE_OUT; i++) {
+	    for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
+		out[i].word[j] = 0;
+	    }
+	}
 
 	// Call the TOP function
 	printf("Call the TOP function...\n");
@@ -99,8 +101,8 @@ int main(int argc, char **argv)
 	    for(int i = 0; i < SIZE_OUT_CHUNK; i++) {
 		for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
 		    if (k < SIZE_OUT_CHUNK_DATA) {
-			bus_data_word out_int =
-			    out[l * SIZE_OUT_CHUNK + i].range(DATA_BITWIDTH * (j+1) - 1, DATA_BITWIDTH * j);
+			word_t out_int =
+			    out[l * SIZE_OUT_CHUNK + i].word[j];
 
 			fout << out_int << " ";
 			fout << pr[k] << " ";
@@ -115,6 +117,7 @@ int main(int argc, char **argv)
 		    }
 		}
 	    }
+	    std::cout << "\n";
 	}
 
 	fout << std::endl;
@@ -134,11 +137,6 @@ int main(int argc, char **argv)
     } else {
 	std::cout << "Unable to open input/predictions file, using default input." << std::endl;
     }
-
-    free(in);
-    free(out);
-    free(load);
-    free(store);
 
     return 0;
 }
