@@ -45,7 +45,7 @@ foreach dma [list 32 64] {
     }
 
     # Config HLS
-    config_rtl -prefix "${ACCELERATOR}_dma${dma}" 
+    config_rtl -prefix "${ACCELERATOR}_dma${dma}_" 
     config_compile -no_signed_zeros=0 -unsafe_math_optimizations=0
     config_schedule -effort medium -relax_ii_for_timing=0 -verbose=0
     config_bind -effort medium

@@ -21,7 +21,7 @@ load_data:
 
     for (unsigned i = 0; i < SIZE_IN_CHUNK; i++) {
     	load_label0:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    _inbuff[i * VALUES_PER_WORD + j] = in1[i].word[j];;
+	    _inbuff[i * VALUES_PER_WORD + j] = in1[base + i].word[j];;
     	}
     }
 }
@@ -40,7 +40,7 @@ store_data:
 
     for (unsigned i = 0; i < SIZE_OUT_CHUNK; i++) {
 	store_label1:for(unsigned j = 0; j < VALUES_PER_WORD; j++) {
-	    out[i].word[j] = _outbuff[i * VALUES_PER_WORD + j];
+	    out[base + i].word[j] = _outbuff[i * VALUES_PER_WORD + j];
 	}
     }
 }
