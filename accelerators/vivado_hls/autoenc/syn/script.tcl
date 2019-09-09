@@ -1,0 +1,1 @@
+../../common/syn/script.tcl
