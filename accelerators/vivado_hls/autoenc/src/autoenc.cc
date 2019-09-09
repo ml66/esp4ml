@@ -7,13 +7,12 @@
 #include <cstring>
 
 
-void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], dma_word_t *in1, unsigned base,
+void LOAD (in_data_word _inbuff[SIZE_IN_CHUNK_DATA], dma_word_t *in1, unsigned chunk,
 	  dma_info_t *load_ctrl, int base_index)
 {
-
-    printf("Load data\n");
-
 load_data:
+
+    unsigned base = SIZE_IN_CHUNK * chunk;
 
     load_ctrl[chunk].index = base;
     load_ctrl[chunk].length = SIZE_IN_CHUNK;
@@ -27,13 +26,12 @@ load_data:
     std::cout << std::endl;
 }
 
-void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], dma_word_t *out, unsigned base,
+void STORE (out_data_word _outbuff[SIZE_OUT_CHUNK_DATA + 8], dma_word_t *out, unsigned chunk,
 	    dma_info_t *store_ctrl, int base_index)
 {
-
-    printf("Store data\n");
-
 store_data:
+
+    unsigned base = SIZE_OUT_CHUNK * chunk;
 
     store_ctrl[chunk].index = base + base_index;
     store_ctrl[chunk].length = SIZE_OUT_CHUNK;
@@ -49,8 +47,6 @@ store_data:
 void COMPUTE (in_data_word _inbuff[SIZE_IN_CHUNK_DATA],
 	      out_data_word _outbuff[SIZE_OUT_CHUNK_DATA])
 {
-    printf("Compute\n");
-
     // computation
     unsigned short size_in1, size_out1;
     myproject(_inbuff, _outbuff, size_in1, size_out1);
@@ -60,8 +56,6 @@ void TOP (dma_word_t *out, dma_word_t *in1, const unsigned conf_info_ninputs,
 	  dma_info_t *load_ctrl, dma_info_t *store_ctrl)
 
 {
-    printf("Main loop starting...\n");
-
 go:
     for (unsigned i = 0; i < conf_info_ninputs; i++)
     {
@@ -69,11 +63,8 @@ go:
 	in_data_word _inbuff[SIZE_IN_CHUNK_DATA];
 	out_data_word _outbuff[SIZE_OUT_CHUNK_DATA];
 
-	unsigned in_base = SIZE_IN_CHUNK * i;
-	unsigned out_base = SIZE_OUT_CHUNK * i;
-
-	LOAD(_inbuff, in1, in_base, load_ctrl, 0);
+	LOAD(_inbuff, in1, i, load_ctrl, 0);
 	COMPUTE(_inbuff, _outbuff);
-	STORE( _outbuff, out, out_base, store_ctrl, size_in);
+	STORE( _outbuff, out, i, store_ctrl, size_in);
     }
 }

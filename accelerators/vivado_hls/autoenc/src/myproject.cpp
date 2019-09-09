@@ -46,7 +46,7 @@ void myproject(
     const_size_in_1 = N_INPUT_1_1;
     const_size_out_1 = N_LAYER_8;
 #ifndef __SYNTHESIS__
-    printf("INFO: load weight and bias values from files\n");
+    // printf("INFO: load weight and bias values from files\n");
     //hls-fpga-machine-learning insert load weights
     load_txt_file< ap_fixed<18,8>, config2::n_in * config2::n_out >(w2, "w2.txt");
     load_txt_file< ap_fixed<18,8>, config2::n_out >(b2, "b2.txt");
