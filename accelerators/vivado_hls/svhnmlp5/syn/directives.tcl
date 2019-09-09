@@ -5,6 +5,12 @@
 
 add_files -tb ../inc/weights
 add_files -tb ../tb_data
+add_files -tb ../src/blocks/myproject_block_layer1.cpp -cflags "-I../inc -I[file normalize ./nnet_utils] -std=c++0x"
+add_files -tb ../src/blocks/myproject_block_layer2.cpp -cflags "-I../inc -I[file normalize ./nnet_utils] -std=c++0x"
+add_files -tb ../src/blocks/myproject_block_layer3.cpp -cflags "-I../inc -I[file normalize ./nnet_utils] -std=c++0x"
+add_files -tb ../src/blocks/myproject_block_layer4.cpp -cflags "-I../inc -I[file normalize ./nnet_utils] -std=c++0x"
+add_files     ../src/blocks/myproject_block_layer5.cpp -cflags "-I../inc -I[file normalize ./nnet_utils] -std=c++0x"
+
 catch {config_array_partition -maximum_size 4096}
 
 # ESP commands

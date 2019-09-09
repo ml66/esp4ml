@@ -6,6 +6,7 @@
 #include "parameters.h"
 
 // Data types and constants
+#define BLOCK 5
 #define DATA_BITWIDTH 16
 #define VALUES_PER_WORD (DMA_SIZE / DATA_BITWIDTH)
 #define NINPUTS 4
