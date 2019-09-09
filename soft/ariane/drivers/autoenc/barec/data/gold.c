@@ -1,0 +1,1 @@
+../../../../../leon3/drivers/autoenc/barec/data/gold.c

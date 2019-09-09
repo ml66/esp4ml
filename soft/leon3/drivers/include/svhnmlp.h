@@ -17,7 +17,8 @@
 
 struct svhnmlp_access {
 	struct esp_access esp;
-	unsigned ninputs;
+	unsigned tokens;
+	unsigned batch;
 	unsigned src_offset;
 	unsigned dst_offset;
 };
