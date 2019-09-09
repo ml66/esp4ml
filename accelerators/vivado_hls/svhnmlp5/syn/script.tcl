@@ -85,14 +85,14 @@ foreach dma [list 64] {
 	csim_design
 
 	# HLS
-	# csynth_design
+	csynth_design
 
 	# # C-RTL Cosimulation
 	# add_files -tb ../tb/tb.cc -cflags "-I../inc -Wno-unknown-pragmas -Wno-unknown-pragmas -DDMA_SIZE=${dma} -std=c++0x -DRTL_SIM"
 	# cosim_design
 
 	# Export RTL
-	# export_design -rtl verilog -format ip_catalog
+	export_design -rtl verilog -format ip_catalog
     }
 }
 
