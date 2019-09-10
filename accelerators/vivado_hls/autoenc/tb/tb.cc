@@ -77,7 +77,6 @@ int main(int argc, char **argv)
 	std::vector<float> pr;
 
 	while ( std::getline(fin,iline) && std::getline (fpr,pline) ) {
-	    if (e % CHECKPOINT == 0) std::cout << "Processing input " << e << std::endl;
 	    e++;
 	    char* cstr=const_cast<char*>(iline.c_str());
 	    char* current;
@@ -109,6 +108,7 @@ int main(int argc, char **argv)
 	printf("Call the TOP function...\n");
 	TOP(out, in, NINPUTS, load, store);
 
+	std::cout << "Results" << std::endl;
 	fout << "Result" << std::endl;
 	errors = 0;
 	k = 0;
