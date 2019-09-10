@@ -109,12 +109,12 @@ struct config8 : nnet::dense_config {
     typedef ap_uint<1> index_t;
 };
 
-struct softmax_config9 : nnet::activ_config {
+struct linear_config9 : nnet::activ_config {
     static const unsigned n_in = N_LAYER_8;
     static const unsigned table_size = 1024;
     static const unsigned io_type = nnet::io_parallel;
-    static const unsigned reuse_factor = 2;
+    static const unsigned reuse_factor = 128;
 };
 
 
-#endif 
+#endif

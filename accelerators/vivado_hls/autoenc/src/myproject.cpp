@@ -92,7 +92,7 @@ void myproject(
     #pragma HLS ARRAY_PARTITION variable=layer8_out complete dim=0
     nnet::dense_large<layer7_t, layer8_t, config8>(layer7_out, layer8_out, w8, b8);
 
-    nnet::softmax<layer8_t, result_t, softmax_config9>(layer8_out, layer9_out);
+    nnet::linear<layer8_t, result_t, linear_config9>(layer8_out, layer9_out);
 
 
 }
