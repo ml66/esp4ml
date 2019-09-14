@@ -27,7 +27,7 @@ void system_t::config_proc()
 
     // Config
     {
-        conf_info_t config(n_Images, n_Rows, n_Cols);
+        conf_info_t config(n_Images, n_Rows, n_Cols, do_dwt);
         wait();
         conf_info.write(config);
         conf_done.write(true);
@@ -49,7 +49,7 @@ void system_t::config_proc()
         sc_time end_time = sc_time_stamp();
         ESP_REPORT_TIME(end_time, "END - visionchip");
 
-        esc_log_latency(clock_cycle(end_time - begin_time));
+        esc_log_latency(sc_object::name(), clock_cycle(end_time - begin_time));
         wait();
         conf_done.write(false);
     }
@@ -57,14 +57,16 @@ void system_t::config_proc()
     // Validate
     {
         dump_memory(); // store the output in more suitable data structure if needed
-        // check the results with the golden model
-        if (validate())
-        {
-            ESP_REPORT_ERROR("validation failed!");
-        } else
-        {
-            ESP_REPORT_INFO("validation passed!");
-        }
+
+	if (do_validation) {
+	    if (validate())
+	    {
+		ESP_REPORT_ERROR("validation failed!");
+	    } else
+	    {
+		ESP_REPORT_INFO("validation passed!");
+	    }
+	}
     }
 
     // Conclude
@@ -77,12 +79,14 @@ void system_t::config_proc()
 // Functions
 void system_t::load_memory()
 {
+#ifdef CADENCE
     // Optional usage check
     if (esc_argc() != 1)
     {
         ESP_REPORT_INFO("usage: %s\n", esc_argv()[0]);
         sc_stop();
     }
+#endif
 
     //  Memory initialization:
     ESP_REPORT_INFO("---- load memory ----");
@@ -145,9 +149,6 @@ void system_t::load_memory()
 
 void system_t::dump_memory()
 {
-<<<<<<< HEAD
-    // ESP_REPORT_INFO("dump memory completed");
-=======
     int n_Pixels = n_Rows * n_Cols;
 
     // -- Read the gold image
@@ -181,7 +182,6 @@ void system_t::dump_memory()
     fclose(fileOut);
 
     ESP_REPORT_INFO("dump memory completed");
->>>>>>> ad5e8f7... visionchip accel: add support for images with 8bit pixels
 }
 
 int system_t::validate()
@@ -218,15 +218,6 @@ int system_t::validate()
     int mem_j = 0;
     for (int i = 0; i < n_Images; i++) {
         for(uint32_t j = 0 ; j < n_Pixels ; j += WORDS_PER_DMA) {
-<<<<<<< HEAD
-            for (uint8_t k = 0; k < WORDS_PER_DMA; k++)
-                if (mem[mem_j].range(((k + 1) << 4) - 1, k << 4).to_int() != imgGold[j + k])
-                {
-                    ESP_REPORT_INFO("Error: %d: %d %d.",
-                                    mem_j, mem[mem_j].range(((k + 1) << 4) - 1, k << 4).to_int(), imgGold[j + k]);
-                    errors++;
-                }
-=======
             for (uint8_t k = 0; k < WORDS_PER_DMA; k++) {
 		if (do_dwt) {
 		    if (mem[mem_j].range(((k + 1) << MAX_PXL_WIDTH_LOG) - 1,
@@ -248,7 +239,6 @@ int system_t::validate()
 		    }
 		}
 	    }
->>>>>>> ad5e8f7... visionchip accel: add support for images with 8bit pixels
             mem_j++;
         }
     }
